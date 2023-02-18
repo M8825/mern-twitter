@@ -3,7 +3,9 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  res.send('respond with a user foobar resource');
+ res.json({
+    message: "GET /api/users + foo"
+  });
 });
 
 module.exports = router;
