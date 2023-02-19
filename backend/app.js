@@ -6,15 +6,15 @@ const logger = require("morgan");
 const { isProduction } = require("./config/keys");
 const cors = require("cors");
 const csurf = require("csurf");
-const debug = require('debug');
+const debug = require("debug");
 
-require('./models/User');
-require('./config/passport'); // <-- ADD THIS LINE
+require('./models/Tweet'); // <--ADD THIS LINE
+require("./models/User");
+require("./config/passport"); // <-- ADD THIS LINE
 const usersRouter = require("./routes/api/users");
 const tweetsRouter = require("./routes/api/tweets");
 const csrfRouter = require("./routes/api/csrf");
-const passport = require('passport'); // <-- ADD THIS LINE
-
+const passport = require("passport"); // <-- ADD THIS LINE
 
 const app = express();
 
@@ -26,26 +26,15 @@ app.use(cookieParser()); // parse cookies as an object on req.cookies
 // ADD THIS SECURITY MIDDLEWARE
 // Security Middleware
 if (!isProduction) {
-    // Enable CORS only in development because React will be on the React
+	// Enable CORS only in development because React will be on the React
 	// development server (http://localhost:3000). (In production, the Express
 	// server will serve the React files statically.)
-    app.use(passport.initialize()); // TODO: maybe move this to the if statement below
+	app.use(passport.initialize()); // TODO: maybe move this to the if statement below
 	app.use(cors());
-
 }
 
 // Set the _csrf token and create req.csrfToken method to generate a hashed
 // CSRF token
-app.use(
-	csurf({
-		cookie: {
-			secure: isProduction,
-			sameSite: isProduction && "Lax",
-			httpOnly: true,
-		},
-	})
-);
-
 
 app.use(
 	csurf({
@@ -60,31 +49,29 @@ app.use(
 // Attach Express routers
 app.use("/api/users", usersRouter); // update the path
 app.use("/api/tweets", tweetsRouter); // update the path
-app.use('/api/csrf', csrfRouter);
-
+app.use("/api/csrf", csrfRouter);
 
 // Express custom middleware for catching all unmatched requests and formatting
 // a 404 error to be sent as the response.
 app.use((req, res, next) => {
-    const err = new Error('Not Found');
-    err.statusCode = 404;
-    next(err);
-  });
+	const err = new Error("Not Found");
+	err.statusCode = 404;
+	next(err);
+});
 
-  const serverErrorLogger = debug('backend:error');
+const serverErrorLogger = debug("backend:error");
 
-  // Express custom error handler that will be called whenever a route handler or
-  // middleware throws an error or invokes the `next` function with a truthy value
-  app.use((err, req, res, next) => {
-    serverErrorLogger(err);
-    const statusCode = err.statusCode || 500;
-    res.status(statusCode);
-    res.json({
-      message: err.message,
-      statusCode,
-      errors: err.errors
-    })
-  });
-
+// Express custom error handler that will be called whenever a route handler or
+// middleware throws an error or invokes the `next` function with a truthy value
+app.use((err, req, res, next) => {
+	serverErrorLogger(err);
+	const statusCode = err.statusCode || 500;
+	res.status(statusCode);
+	res.json({
+		message: err.message,
+		statusCode,
+		errors: err.errors,
+	});
+});
 
 module.exports = app;
