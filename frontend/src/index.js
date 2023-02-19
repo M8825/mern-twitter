@@ -5,6 +5,7 @@ import App from './App';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import configureStore from './store/store';
+import { ProtectedRoute } from './components/Routes/Routes';
 
 let store = configureStore({});
 
