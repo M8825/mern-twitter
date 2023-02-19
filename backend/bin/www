@@ -38,6 +38,7 @@ mongoose
     // console into `dbLogger` and `serverLogger` above.
     dbLogger("Connected to MongoDB successfully");
     server.listen(port);
+    // insertSeeds();
   })
   // Use `debug` instead of `serverLogger` if you did not split the debug
   // console into `dbLogger` and `serverLogger` above.
