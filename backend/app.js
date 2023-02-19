@@ -9,9 +9,11 @@ const csurf = require("csurf");
 const debug = require('debug');
 
 require('./models/User');
+require('./config/passport'); // <-- ADD THIS LINE
 const usersRouter = require("./routes/api/users");
 const tweetsRouter = require("./routes/api/tweets");
 const csrfRouter = require("./routes/api/csrf");
+const passport = require('passport'); // <-- ADD THIS LINE
 
 
 const app = express();
@@ -24,10 +26,12 @@ app.use(cookieParser()); // parse cookies as an object on req.cookies
 // ADD THIS SECURITY MIDDLEWARE
 // Security Middleware
 if (!isProduction) {
-	// Enable CORS only in development because React will be on the React
+    // Enable CORS only in development because React will be on the React
 	// development server (http://localhost:3000). (In production, the Express
 	// server will serve the React files statically.)
+    app.use(passport.initialize()); // TODO: maybe move this to the if statement below
 	app.use(cors());
+
 }
 
 // Set the _csrf token and create req.csrfToken method to generate a hashed
